@@ -1,5 +1,6 @@
 package salle_de_sport.app;
 
+import salle_de_sport.AdherentDAO;
 import salle_de_sport.exception.AdherentIntrouvableException;
 import salle_de_sport.model.*;
 import salle_de_sport.service.SalleDeSport;
@@ -51,7 +52,7 @@ public class Main {
         Reservation r4 = a2.reserver(s1);
         r4.ajouterPrestation(serviette);
 
-        // Affichages demandés
+        // Affichages
         System.out.println("=== ADHERENTS + ABONNEMENTS ===");
         for (Adherent a : salle.getAdherents()) {
             System.out.println(a.getNom() + " -> " + a.getAbonnement());
@@ -77,5 +78,39 @@ public class Main {
         } catch (AdherentIntrouvableException e) {
             System.out.println(e.getMessage());
         }
+
+        // ===== PARTIE JDBC - DAO =====
+        AdherentDAO dao = new AdherentDAO();
+
+        // 1. Insérer deux adhérents
+        dao.inserer(a1);  // Alice
+        dao.inserer(a2);  // Karim
+
+        // 2. Afficher la liste
+        System.out.println("\n--- Liste des adhérents ---");
+        for (Adherent a : dao.lister()) {
+            System.out.println(a.getId() + " - " + a.getNom());
+        }
+
+        // 3. Modifier Karim → Robert
+        System.out.println("\nModification de Karim...");
+        dao.modifier(new Adherent(2, "Robert", null));
+
+        // 4. Afficher après modification
+        System.out.println("\n--- Liste après modification ---");
+        for (Adherent a : dao.lister()) {
+            System.out.println(a.getId() + " - " + a.getNom());
+        }
+
+        // 5. Supprimer Alice
+        System.out.println("\nSuppression de Alice...");
+        dao.supprimer(1);
+
+        // 6. Liste finale
+        System.out.println("\n--- Liste finale ---");
+        for (Adherent a : dao.lister()) {
+            System.out.println(a.getId() + " - " + a.getNom());
+        }
+
     }
 }
